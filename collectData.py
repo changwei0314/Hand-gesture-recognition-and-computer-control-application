@@ -52,6 +52,11 @@ def parse_args():
         default=100,
         help='amount of images u wanna collect',
     )
+    parser.add_argument(
+        '--s',
+        default='0',
+        help='skeleton or not',
+    )
     return parser.parse_args()
 
 # The controller/frontend that subtracts the background
@@ -119,8 +124,10 @@ if __name__ == '__main__':
     ARGS = parse_args()
     # Create a path for the data collection
     # img_label = create_path(WHERE, GESTURE)
-
-    save_folder = os.path.join('data/training/', ARGS.clas[0])
+    if ARGS.s:
+        save_folder = os.path.join('data/training/skeleton', ARGS.clas[0])
+    else:
+        save_folder = os.path.join('data/training/no_skeleton', ARGS.clas[0])
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
     # print(len(os.listdir()))
