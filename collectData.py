@@ -33,7 +33,8 @@ THRESHOLD = 50
 # Gesture Mode variables
 GESTUREMODE = False # Don't ever edit this!
 GESTURES_RECORDED = [10,10,10,10,10,10,10,10,10,10]
-SONG = 'The Beatles - I Saw Her Standing There'
+gesture_dict= {0:'zero', 1:'one',2:'two' }
+# Gesture_index
 ACTIONS_GESTURE_ENCODING = {'fist': 'Play/Unpause', 'five': 'Pause', 'none': 'Do Nothing', 'okay': 'Increase Volume', 'peace': 'Decrease Volume', 'rad': "Load Song", 'straight': "Stop", "thumbs":"NA"}
 
 # Data Collection Mode variables
@@ -47,7 +48,7 @@ def parse_args():
         description="data collection")
     parser.add_argument(
         '--clas',
-        default='0',
+        default=0,
         help='which class of the gestures',
     )
     parser.add_argument(
@@ -57,7 +58,7 @@ def parse_args():
     )
     parser.add_argument(
         '--s',
-        default='0',
+        default=0,
         help='skeleton or not',
     )
     return parser.parse_args()
@@ -223,7 +224,7 @@ if __name__ == '__main__':
                 # If Datamode
                 
                 time.sleep(0.5)
-                cv2.imwrite(save_folder + f"/{n+i}.jpg", roi)
+                cv2.imwrite(save_folder + f"/{gesture_dict[int(ARGS.clas)]}_{n+i}.jpg", roi)
                 # cv2.putText(new_image, "Photos Captured:",(980,400), FONT, 0.7, (0,0,0), 2, cv2.LINE_AA)
                 # cv2.putText(new_image, f"{i}/{NUMBERTOCAPTURE}",(1010,430), FONT, 0.7, (0,0,0), 2, cv2.LINE_AA)
         # Show the image
