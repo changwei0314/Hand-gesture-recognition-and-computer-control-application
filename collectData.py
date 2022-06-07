@@ -125,15 +125,12 @@ if __name__ == '__main__':
     # Create a path for the data collection
     # img_label = create_path(WHERE, GESTURE)
     if ARGS.s:
-        save_folder = os.path.join('data/training/skeleton', ARGS.clas[0])
+        save_folder = os.path.join('data/training/skeleton', ARGS.clas)
     else:
-        save_folder = os.path.join('data/training/no_skeleton', ARGS.clas[0])
+        save_folder = os.path.join('data/training/no_skeleton', ARGS.clas)
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
     # print(len(os.listdir()))
-
-    # use our model
-    # light_img, _, _, _ = preprocess_image(f'data/test/images/{ARGS.light_image}', 2)
 
     print("Starting live video stream...")
     # bgModel = capture_background()
