@@ -4,7 +4,6 @@ import time
 import argparse
 import numpy as np
 import mediapipe as mp
-from skimage import io
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
