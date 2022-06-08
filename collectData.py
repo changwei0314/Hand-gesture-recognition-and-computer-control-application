@@ -4,6 +4,7 @@ import time
 import argparse
 import numpy as np
 import mediapipe as mp
+from skimage import io
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -33,7 +34,7 @@ THRESHOLD = 50
 # Gesture Mode variables
 GESTUREMODE = False # Don't ever edit this!
 GESTURES_RECORDED = [10,10,10,10,10,10,10,10,10,10]
-gesture_dict= {0:'zero', 1:'one',2:'two' }
+gesture_dict= {0:'zero', 1:'one',2:'two' ,3:'three',4:'thumb_up', 5:'five',6:'six', 7:'seven',8:'ok', 9:'none'}
 # Gesture_index
 ACTIONS_GESTURE_ENCODING = {'fist': 'Play/Unpause', 'five': 'Pause', 'none': 'Do Nothing', 'okay': 'Increase Volume', 'peace': 'Decrease Volume', 'rad': "Load Song", 'straight': "Stop", "thumbs":"NA"}
 
@@ -138,6 +139,10 @@ if __name__ == '__main__':
 
     print("Starting live video stream...")
     # bgModel = capture_background()
+
+    # print(os.listdir(save_folder)[0])
+    # img=cv2.imread("./data/training/skeleton/1/one_0.jpg",0)
+    # show(img)
 
     # If a background has been captured
     n=len(os.listdir(save_folder))
