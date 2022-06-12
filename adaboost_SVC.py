@@ -75,7 +75,7 @@ def Adaboost(dataPath="dataset",class_num=10,skeleton = 0):
 
 if __name__ == "__main__":
     ARGS = parse_args()
-    model = Adaboost("data/training",10,ARGS.AddSkeleton)
+    model = Adaboost("data/training",5,ARGS.AddSkeleton)
     '''
     path = "evaluate/skeleton"
     data = []
