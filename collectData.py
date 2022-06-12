@@ -61,6 +61,11 @@ def parse_args():
         default=0,
         help='skeleton or not',
     )
+    parser.add_argument(
+        '--l',
+        default=1000,
+        help='amount limitation of the dataset of each class',
+    )
     return parser.parse_args()
 
 # The controller/frontend that subtracts the background
@@ -145,6 +150,7 @@ if __name__ == '__main__':
 
     # If a background has been captured
     n=len(os.listdir(save_folder))
+    print(f'currently {n} images in this folder')
     cap = cv2.VideoCapture(0)
     
     with mp_hands.Hands(max_num_hands = 2,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:  
@@ -178,6 +184,9 @@ if __name__ == '__main__':
     if key==13:  
         with mp_hands.Hands(max_num_hands = 2,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:  
             for i in range(int(ARGS.n)): 
+                cur_n=len(os.listdir(save_folder))
+                if cur_n==int(ARGS.l):
+                    break
                 # Capture image
                 label, image = cap.read()
 
