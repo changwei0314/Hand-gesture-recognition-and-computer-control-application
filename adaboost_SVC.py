@@ -81,7 +81,7 @@ def prediction(img_lst):
     res = []
 
     for img in img_lst:
-        img = cv2.resize(img,(30,30),cv2.COLOR_RGB2GRAY)
+        img = cv2.resize(img,(30,30))
         img = np.asarray(img,dtype = float)
         img = img.reshape(1,-1)
         res.append(model.predict(img))
