@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 import numpy as np
 import argparse
+import joblib
 
 from sklearn.svm import SVC
 import cv2
@@ -68,12 +69,34 @@ def Adaboost(dataPath="data/training",class_num=10,skeleton = 0):
     print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
     print("Confusion_matrix:")
+    print(metrics.confusion_matrix(y_test,y_pred))
     print(metrics.classification_report(y_test,y_pred))
 
 
     return model
+    
+
+def prediction(img_lst):
+    model = joblib.load("adaboost")
+    res = []
+
+    for img in img_lst:
+        img = cv2.resize(img,(30,30),cv2.COLOR_RGB2GRAY)
+        img = np.asarray(img,dtype = float)
+        img = img.reshape(1,-1)
+        res.append(model.predict(img))
+
+        
+
+    vals, counts = np.unique(np.array(res), return_counts=True)
+    index = np.argmax(counts)
+    predict_number = vals[index]
+    return predict_number
 
 if __name__ == "__main__":
+    
     ARGS = parse_args()
     model = Adaboost("data/training",10,ARGS.AddSkeleton)
+    joblib.dump(model,'Adaboost')
+
 
