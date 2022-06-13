@@ -33,15 +33,10 @@ THRESHOLD = 50
 # Gesture Mode variables
 GESTUREMODE = False # Don't ever edit this!
 GESTURES_RECORDED = [10,10,10,10,10,10,10,10,10,10]
-gesture_dict= {0:'zero', 1:'one',2:'two' ,3:'three',4:'thumb_up', 5:'five',6:'six', 7:'seven',8:'ok', 9:'none'}
+gesture_dict= {0:'zero', 1:'one',2:'two' ,3:'three',4:'thumb_up', 5:'five',6:'six', 7:'seven',8:'ok', 9:'none', 10:'temp'}
 # Gesture_index
 ACTIONS_GESTURE_ENCODING = {'fist': 'Play/Unpause', 'five': 'Pause', 'none': 'Do Nothing', 'okay': 'Increase Volume', 'peace': 'Decrease Volume', 'rad': "Load Song", 'straight': "Stop", "thumbs":"NA"}
 
-# Data Collection Mode variables
-DATAMODE = False # Don't ever edit this!
-WHERE = "train"
-GESTURE = "okay"
-NUMBERTOCAPTURE = 100
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -153,7 +148,7 @@ if __name__ == '__main__':
     print(f'currently {n} images in this folder')
     cap = cv2.VideoCapture(0)
     
-    with mp_hands.Hands(max_num_hands = 2,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:  
+    with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:  
         while 1:
             label, image = cap.read()
 

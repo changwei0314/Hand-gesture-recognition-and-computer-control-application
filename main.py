@@ -2,8 +2,10 @@ import cv2
 import os
 import time
 import argparse
+import pyautogui
 import numpy as np
 import mediapipe as mp
+from model import prediction, CNN
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -38,6 +40,42 @@ def parse_args():
     )
     return parser.parse_args()
 
+def get_position(pre_hand_result, hand_result):
+        """
+        returns coordinates of current hand position.
+        Locates hand to get cursor position also stabilize cursor by 
+        dampening jerky motion of hand.
+        Returns
+        -------
+        tuple(float, float)
+        """
+        point = 8
+        position = [hand_result.landmark[point].x ,hand_result.landmark[point].y]
+        sx,sy = pyautogui.size()
+        x_old,y_old = pyautogui.position()
+        x = int(position[0]*sx)
+        y = int(position[1]*sy)
+        delta_x=x
+        delta_y=y
+        if pre_hand_result is not None:
+            delta_x = x - pre_hand_result[0]
+            delta_y = y - pre_hand_result[1]
+            # Controller.prev_hand = x,y
+        # delta_x = x - pre_hand_result.landmark[point].x
+        # delta_y = y - pre_hand_result.landmark[point].y
+
+        distsq = delta_x**2 + delta_y**2
+        ratio = 1
+
+        if distsq <= 25:
+            ratio = 0
+        elif distsq <= 900:
+            ratio = 0.07 * (distsq ** (1/2))
+        else:
+            ratio = 2.1
+        x_ , y_ = x_old + delta_x*ratio , y_old + delta_y*ratio
+        return x_,y_, [x,y]
+
 if __name__ == '__main__':
     
     ARGS = parse_args()
@@ -46,10 +84,14 @@ if __name__ == '__main__':
     cap= cv2.VideoCapture(0)
 
     while 1:
-        label, image= cap.read()
+        label, img= cap.read()
 
         img=cv2.flip(img,1)
-        cv2.putText(img, f"Press Enter to start your assistant.../nGesture in the rectangle to make the command :p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
+        text = "Press Enter to start your assistant... \n Gesture in the rectangle to make the command :p"
+        y0, dy = 80, 20
+        for i, line in enumerate(text.split('\n')):
+            y = y0 + i*dy
+            cv2.putText(img, line, (80, y ), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,0,0), 2,cv2.LINE_AA)
         cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
         cv2.imshow('Personal assistant',img) 
         key=cv2.waitKey(100)
@@ -60,18 +102,91 @@ if __name__ == '__main__':
             cv2.destroyAllWindows()
             break
     imgs=[]
+    act=9
     if key==13:
-        while 1:
-            label, image= cap.read()
-            img=cv2.flip(img,1)
-            cv2.putText(img, f"Press Enter to start your assistant.../nGesture in the rectangle to make the command :p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
-            cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
-            cv2.imshow('Personal assistant',img) 
-            img = cv2.bilateralFilter(img, 5, 50, 100)
-            img = img[TOP:BOTTOM, LEFT:RIGHT]
-            imgs.append(img)
-            time.sleep(0.02)
-            if len(imgs)==5:
-                act= (imgs)
-                imgs.clear()
+        with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:
+            while 1:
+                act=9
+                label, img= cap.read()
+                img=cv2.flip(img,1)
+                # text = "Press Enter to start your assistant... \n Gesture in the rectangle to make the command :p"
+                # y0, dy = 80, 4
+                # for i, line in enumerate(text.split('\n')):
+                #     y = y0 + i*dy
+                #     cv2.putText(img, line, (80, y ), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,0,0), 2,cv2.LINE_AA)
+                cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
+                cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
+                cv2.imshow('Personal assistant',img)
+                cv2.waitKey(10)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img.flags.writeable = False
+                results = hands.process(img)
+                img.flags.writeable = True
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                if results.multi_hand_landmarks: 
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
+                img = img[TOP:BOTTOM, LEFT:RIGHT]
+                img = cv2.bilateralFilter(img, 5, 50, 100)
+                imgs.append(img)
+                time.sleep(0.05)
+                if len(imgs)==10:
+                    act= prediction(imgs)
+                    imgs.clear()
+                    print(f"predicted gesture {act}")
+                    if act==9:
+                        continue
+                    elif act==0:
+                        continue
+                    elif act==1:
+                        continue
+                    elif act==2:
+                        continue
+                    elif act==3:
+                        continue
+                    elif act==4:
+                        continue
+                    elif act==5:
+                        continue
+                    elif act==6:
+                        continue
+                    elif act==7:
+                        continue
+                        # pyautogui.FAILSAFE=0
+                        # with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.7, min_tracking_confidence=0.5) as hands:
+                        #     imgss=[]
+                        #     actt=1
+                        #     pre=None
+                        #     while 1:
+                        #         label, img= cap.read()
+                        #         img=cv2.flip(img,1)
+                        #         cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
+                        #         cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
+                        #         cv2.imshow('Personal assistant',img)
+                        #         cv2.waitKey(10)
+                        #         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                        #         img.flags.writeable = False
+                        #         results = hands.process(img)
+                        #         img.flags.writeable = True
+                        #         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                        #         if results.multi_hand_landmarks:
+                        #             right = results.multi_hand_landmarks[0]
+                        #             x,y, pre= get_position(pre, right)
+                        #             pyautogui.moveTo(x, y, duration = 0.1)
+                        #         img = cv2.bilateralFilter(img, 5, 50, 100)
+                        #         img = img[TOP:BOTTOM, LEFT:RIGHT]
+                        #         imgss.append(img)
+                        #         time.sleep(0.1)
+                        #         if len(imgs)==5:
+                        #             actt= prediction(imgss)
+                        #             # actt= 1
+                        #             imgss.clear()
+                        #         if  not actt:
+                        #             break
+                                
+                        #         # if results.multi_hand_landmarks: 
+                        #         #     for hand_landmarks in results.multi_hand_landmarks:
+                        #         #         mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+                    elif act==8:
+                        continue
                 
