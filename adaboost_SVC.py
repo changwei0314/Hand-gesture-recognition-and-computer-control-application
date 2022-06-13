@@ -48,7 +48,7 @@ def Adaboost(dataPath="dataset",class_num=10,skeleton = 0):
     svc = SVC(probability=True,kernel = 'linear')
     
     # Create adaboost classifer object
-    abc = AdaBoostClassifier(n_estimators=50, base_estimator=svc, learning_rate=1)
+    abc = AdaBoostClassifier(n_estimators=25, base_estimator=svc, learning_rate=0.8)
 
 
     # Train Adaboost Classifer
@@ -68,32 +68,12 @@ def Adaboost(dataPath="dataset",class_num=10,skeleton = 0):
     print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
     print("Confusion_matrix:")
-    print(metrics.confusion_matrix(y_test,y_pred))
+    print(metrics.classification_report(y_test,y_pred))
 
 
     return model
 
 if __name__ == "__main__":
     ARGS = parse_args()
-    model = Adaboost("data/training",5,ARGS.AddSkeleton)
-    '''
-    path = "evaluate/skeleton"
-    data = []
-    label = []
-    for i in range(3):
-        datapath = path+"/"+str(i)
-        fptr = os.listdir(datapath)
-        for filename in fptr:
-            img = cv2.imread(datapath+"/"+filename,cv2.IMREAD_GRAYSCALE)
-            img = cv2.resize(img,(30,30),interpolation=cv2.INTER_AREA)
-            img = np.asarray(img,dtype = float)
-            img = img.reshape(1,-1)
-            data.append(img)
-            label.append(i)
-    X_evaluate = np.asarray(data)
-    nsamples,nx,ny = X_evaluate.shape
-    X_evaluate = X_evaluate.reshape((nsamples,nx*ny))
-    pred = model.predict(X_evaluate)
-    print("Wild data Accuracy:",metrics.accuracy_score(label,pred))
-    '''
+    model = Adaboost("data/training",10,ARGS.AddSkeleton)
 
