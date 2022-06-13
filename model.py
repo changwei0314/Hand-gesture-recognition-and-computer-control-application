@@ -42,8 +42,8 @@ class CNN(nn.Module):
 def prediction(img_lst):
     device = torch.device('cpu')
 
-    #model = torch.load("no_skeleton.pkl")
-    model = torch.load("skeleton.pkl")
+    #model = torch.load("weight/no_skeleton.pkl")
+    model = torch.load("weight/skeleton.pkl")
 
     # store predict result
     res = []
