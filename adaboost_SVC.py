@@ -21,7 +21,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def Adaboost(dataPath="dataset",class_num=10,skeleton = 0):
+def Adaboost(dataPath="data/training",class_num=10,skeleton = 0):
     #Load data
     data = []
     label = []
@@ -48,7 +48,7 @@ def Adaboost(dataPath="dataset",class_num=10,skeleton = 0):
     svc = SVC(probability=True,kernel = 'linear')
     
     # Create adaboost classifer object
-    abc = AdaBoostClassifier(n_estimators=25, base_estimator=svc, learning_rate=0.8)
+    abc = AdaBoostClassifier(n_estimators=500, base_estimator=svc, learning_rate=1)
 
 
     # Train Adaboost Classifer
