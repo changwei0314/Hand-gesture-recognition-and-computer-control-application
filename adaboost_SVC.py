@@ -22,7 +22,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def Adaboost(dataPath="data/training",class_num=10,skeleton = 0):
+def Adaboost(dataPath="data/training",class_num=10,skeleton = 1):
     #Load data
     data = []
     label = []
@@ -31,9 +31,11 @@ def Adaboost(dataPath="data/training",class_num=10,skeleton = 0):
       dataPath = dataPath+"/skeleton"
     else:
       dataPath = dataPath+"/no_skeleton"
+    lst = [1,4,5,7,9]
+    all = list(range(10))
 
-    for i in range(class_num):
-      path = dataPath+"/"+str(i)
+    for cls in all:
+      path = dataPath+"/"+str(cls)
       fptr = os.listdir(path)
       for filename in fptr:
         img = cv2.imread(path+"/"+filename,cv2.IMREAD_GRAYSCALE)
@@ -41,7 +43,7 @@ def Adaboost(dataPath="data/training",class_num=10,skeleton = 0):
         img = np.asarray(img,dtype = float)
         img = img.reshape(1,-1)
         data.append(img)
-        label.append(i)
+        label.append(cls)
 
     # Split dataset into training set and test set
     X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.3,shuffle=True) # 70% training and 30% test
