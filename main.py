@@ -5,8 +5,7 @@ import argparse
 import pyautogui
 import numpy as np
 import mediapipe as mp
-# from model import prediction, CNN
-import  adaboost_SVC
+from model import prediction, CNN
 
 mp_drawing = mp.solutions.drawing_utils
 drawingModule = mp.solutions.drawing_utils
@@ -140,7 +139,7 @@ if __name__ == '__main__':
                 imgs.append(img)
                 time.sleep(0.5)
                 if len(imgs)==5:
-                    act= adaboost_SVC.prediction(imgs)
+                    act= prediction(imgs)
                     # label, img= cap.read()
                     # img=cv2.flip(img,1)
                     # cv2.imshow('Personal assistant',img)
@@ -156,43 +155,42 @@ if __name__ == '__main__':
                         pyautogui.click(button='left')
                         # continue
                     elif act==1:
-                        continue
-                        # pyautogui.FAILSAFE=0
-                        # with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.7, min_tracking_confidence=0.5) as hands:
-                        #     imgss=[]
-                        #     actt=-1
-                        #     pre=None
-                        #     while 1:
-                        #         label, img= cap.read()
-                        #         img=cv2.flip(img,1)
-                        #         cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
-                        #         cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
-                        #         cv2.imshow('Personal assistant',img)
-                        #         cv2.waitKey(5)
-                        #         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                        #         img.flags.writeable = False
-                        #         results = hands.process(img)
-                        #         img.flags.writeable = True
-                        #         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-                        #         if results.multi_hand_landmarks:
-                        #             right = results.multi_hand_landmarks[0]
-                        #             x,y, pre= get_position(pre, right)
-                        #             pyautogui.moveTo(x, y, duration = 0.1)
-                        #             for hand_landmarks in results.multi_hand_landmarks:
-                        #                 # mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
-                        #                 drawingModule.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS,
-                        #                                             drawingModule.DrawingSpec(color = (121, 22, 76), thickness = 2, circle_radius = 1),
-                        #                                             drawingModule.DrawingSpec(color = (250, 44, 250), thickness = 2, circle_radius = 1))
-                        #         img = cv2.bilateralFilter(img, 5, 50, 100)
-                        #         img = img[TOP:BOTTOM, LEFT:RIGHT]
-                        #         imgss.append(img)
-                        #         time.sleep(0.25)
-                        #         if len(imgss)==5:
-                        #             actt= adaboost_SVC.prediction(imgss)
-                        #             # actt= 1
-                        #             imgss.clear()
-                        #             if  actt==4:
-                        #                 break
+                        pyautogui.FAILSAFE=0
+                        with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.7, min_tracking_confidence=0.5) as hands:
+                            imgss=[]
+                            actt=-1
+                            pre=None
+                            while 1:
+                                label, img= cap.read()
+                                img=cv2.flip(img,1)
+                                cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
+                                cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
+                                cv2.imshow('Personal assistant',img)
+                                cv2.waitKey(5)
+                                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                                img.flags.writeable = False
+                                results = hands.process(img)
+                                img.flags.writeable = True
+                                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                                if results.multi_hand_landmarks:
+                                    right = results.multi_hand_landmarks[0]
+                                    x,y, pre= get_position(pre, right)
+                                    pyautogui.moveTo(x, y, duration = 0.1)
+                                    for hand_landmarks in results.multi_hand_landmarks:
+                                        # mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
+                                        drawingModule.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS,
+                                                                    drawingModule.DrawingSpec(color = (121, 22, 76), thickness = 2, circle_radius = 1),
+                                                                    drawingModule.DrawingSpec(color = (250, 44, 250), thickness = 2, circle_radius = 1))
+                                img = cv2.bilateralFilter(img, 5, 50, 100)
+                                img = img[TOP:BOTTOM, LEFT:RIGHT]
+                                imgss.append(img)
+                                time.sleep(0.25)
+                                if len(imgss)==5:
+                                    actt= prediction(imgss)
+                                    # actt= 1
+                                    imgss.clear()
+                                    if  actt==4:
+                                        break
     cap.release()
     cv2.destroyAllWindows()
                 
