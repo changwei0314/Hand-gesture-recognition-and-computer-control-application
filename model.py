@@ -39,15 +39,15 @@ class CNN(nn.Module):
 ################ grasp five image ################
 
 
-def prediction(img_lst):
+def prediction(img_lst, model):
     device = torch.device('cpu')
 
     #model = torch.load("weight/no_skeleton.pkl")
-    model = torch.load("weight/skeleton.pkl")
+    # model = torch.load("weight/skeleton.pkl")
 
     # store predict result
     res = []
-
+    model.eval()
     for img in img_lst:
 
         #img = cv2.imread("", cv2.IMREAD_COLOR)
@@ -64,12 +64,13 @@ def prediction(img_lst):
         test_loader = DataLoader(
             test_set, batch_size=1, shuffle=False, num_workers=2)
 
-        for i, (x, y) in enumerate(test_loader):
-            x = x.to(device, dtype=torch.float)
-            output = model(x)
-            pred = output.argmax(dim=1)
+        with torch.no_grad():
+            for i, (x, y) in enumerate(test_loader):
+                x = x.to(device, dtype=torch.float)
+                output = model(x)
+                pred = output.argmax(dim=1)
 
-            res.append(int(pred[0]))
+                res.append(int(pred[0]))
 
     vals, counts = np.unique(np.array(res), return_counts=True)
     index = np.argmax(counts)

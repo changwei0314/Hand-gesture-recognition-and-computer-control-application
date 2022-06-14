@@ -1,0 +1,110 @@
+import cv2
+from model import prediction
+# from model import CNN
+import adaboost_SVC
+import time
+import torch
+import torch.nn as nn
+import pandas as pd
+import numpy as np
+from torch.utils.data import TensorDataset, DataLoader
+
+class CNN(nn.Module):
+    def __init__(self):
+        super(CNN, self).__init__()
+
+        self.cnn1 = nn.Conv2d(3, 8, kernel_size=2, stride=2, padding=0)
+        self.relu1 = nn.ReLU()
+        self.maxpool1 = nn.MaxPool2d(kernel_size=2)
+
+        self.cnn2 = nn.Conv2d(8, 32, kernel_size=2, stride=1, padding=0)
+        self.relu2 = nn.ReLU()
+        self.maxpool2 = nn.MaxPool2d(kernel_size=2)
+
+        self.fc = nn.Linear(10368, 10)
+
+    def forward(self, x):
+        out = self.cnn1(x)
+        out = self.relu1(out)
+        out = self.maxpool1(out)
+
+        out = self.cnn2(out)
+        out = self.relu2(out)
+        out = self.maxpool2(out)
+        out = out.view(out.size(0), -1)
+
+        out = self.fc(out)
+        return out
+
+def prediction(img_lst, model):
+    # device = torch.device('cpu')
+
+    #model = torch.load("weight/no_skeleton.pkl")
+    # model = torch.load("weight/skeleton.pkl")
+
+    # store predict result
+    res = []
+    model.eval()
+    for img in img_lst:
+
+        #img = cv2.imread("", cv2.IMREAD_COLOR)
+
+        dim = (150, 150)
+        # resize image to 150*150
+        img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        img = np.transpose(img)
+
+        img_tensor = torch.from_numpy(
+            np.array([img])).to(device, dtype=torch.float)
+        label_tensor = torch.from_numpy(np.array([0])).type(torch.LongTensor)
+        test_set = TensorDataset(img_tensor, label_tensor)
+        test_loader = DataLoader(
+            test_set, batch_size=1, shuffle=False, num_workers=2)
+
+        with torch.no_grad():
+            for i, (x, y) in enumerate(test_loader):
+                x = x.to(device, dtype=torch.float)
+                output = model(x)
+                pred = output.argmax(dim=1)
+
+                res.append(int(pred[0]))
+
+    vals, counts = np.unique(np.array(res), return_counts=True)
+    index = np.argmax(counts)
+    predict_number = vals[index]
+    return predict_number
+
+
+if __name__ == '__main__':
+    # device = torch.device('cpu')
+    # model = torch.load("weight/skeleton.pkl")
+    # model.to(device)
+
+    imgs=[]
+    # img=cv2.imread('data/training/skeleton/8/ok_0.jpg',1)
+    # # print(img.shape)
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_1.jpg',1)
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_2.jpg',1)
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_3.jpg',1)
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_4.jpg',1)
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_5.jpg')
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_6.jpg')
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_7.jpg')
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_8.jpg')
+    # imgs.append(img)
+    # img=cv2.imread('data/training/skeleton/8/ok_9.jpg')
+    # imgs.append(img)
+    img=cv2.imread("temp.jpg",0)
+    imgs.append(img)
+    t=time.time()
+    # print(prediction(imgs,model))
+    print(adaboost_SVC.prediction(imgs))
+    print(time.time()-t)

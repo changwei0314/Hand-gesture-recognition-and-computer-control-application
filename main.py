@@ -5,9 +5,11 @@ import argparse
 import pyautogui
 import numpy as np
 import mediapipe as mp
-from model import prediction, CNN
+# from model import prediction, CNN
+import  adaboost_SVC
 
 mp_drawing = mp.solutions.drawing_utils
+drawingModule = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 '''
 GLOBAL VARIABLES
@@ -93,8 +95,10 @@ if __name__ == '__main__':
             y = y0 + i*dy
             cv2.putText(img, line, (80, y ), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,0,0), 2,cv2.LINE_AA)
         cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
+        cv2.namedWindow("Personal assistant", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Personal assistant", 1280,960)
         cv2.imshow('Personal assistant',img) 
-        key=cv2.waitKey(100)
+        key=cv2.waitKey(5)
         if  key ==13:
             break
         elif key==ord('q'):
@@ -106,7 +110,7 @@ if __name__ == '__main__':
     if key==13:
         with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:
             while 1:
-                act=9
+                act=-1
                 label, img= cap.read()
                 img=cv2.flip(img,1)
                 # text = "Press Enter to start your assistant... \n Gesture in the rectangle to make the command :p"
@@ -117,7 +121,7 @@ if __name__ == '__main__':
                 cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
                 cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
                 cv2.imshow('Personal assistant',img)
-                cv2.waitKey(10)
+                cv2.waitKey(5)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 img.flags.writeable = False
                 results = hands.process(img)
@@ -125,37 +129,38 @@ if __name__ == '__main__':
                 img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 if results.multi_hand_landmarks: 
                     for hand_landmarks in results.multi_hand_landmarks:
-                        mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
+                        # mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
+                        drawingModule.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS,
+                                                    drawingModule.DrawingSpec(color = (121, 22, 76), thickness = 2, circle_radius = 1),
+                                                    drawingModule.DrawingSpec(color = (250, 44, 250), thickness = 2, circle_radius = 1))
                 img = img[TOP:BOTTOM, LEFT:RIGHT]
                 img = cv2.bilateralFilter(img, 5, 50, 100)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                cv2.imwrite('temp.jpg', img)
                 imgs.append(img)
-                time.sleep(0.05)
-                if len(imgs)==10:
-                    act= prediction(imgs)
+                time.sleep(0.5)
+                if len(imgs)==5:
+                    act= adaboost_SVC.prediction(imgs)
+                    # label, img= cap.read()
+                    # img=cv2.flip(img,1)
+                    # cv2.imshow('Personal assistant',img)
+                    # cv2.waitKey(0)
                     imgs.clear()
-                    print(f"predicted gesture {act}")
-                    if act==9:
-                        continue
-                    elif act==0:
-                        continue
-                    elif act==1:
-                        continue
-                    elif act==2:
-                        continue
-                    elif act==3:
-                        continue
-                    elif act==4:
-                        continue
+                    print(f"predicted gesture {act} current len {len(imgs)}")
+                    if act==0:
+                        break
                     elif act==5:
-                        continue
-                    elif act==6:
-                        continue
-                    elif act==7:
+                        pyautogui.scroll(-200)
+                        # continue
+                    elif act==4:
+                        pyautogui.click(button='left')
+                        # continue
+                    elif act==1:
                         continue
                         # pyautogui.FAILSAFE=0
                         # with mp_hands.Hands(max_num_hands = 1,min_detection_confidence=0.7, min_tracking_confidence=0.5) as hands:
                         #     imgss=[]
-                        #     actt=1
+                        #     actt=-1
                         #     pre=None
                         #     while 1:
                         #         label, img= cap.read()
@@ -163,7 +168,7 @@ if __name__ == '__main__':
                         #         cv2.putText(img, f"Doing nothing now:p", (80, 80), FONT, 0.7, (0, 0, 0), 2, cv2.LINE_AA)
                         #         cv2.rectangle(img, (LEFT,TOP), (RIGHT, BOTTOM), (0,0,0), 1)
                         #         cv2.imshow('Personal assistant',img)
-                        #         cv2.waitKey(10)
+                        #         cv2.waitKey(5)
                         #         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                         #         img.flags.writeable = False
                         #         results = hands.process(img)
@@ -173,20 +178,21 @@ if __name__ == '__main__':
                         #             right = results.multi_hand_landmarks[0]
                         #             x,y, pre= get_position(pre, right)
                         #             pyautogui.moveTo(x, y, duration = 0.1)
+                        #             for hand_landmarks in results.multi_hand_landmarks:
+                        #                 # mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS) 
+                        #                 drawingModule.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS,
+                        #                                             drawingModule.DrawingSpec(color = (121, 22, 76), thickness = 2, circle_radius = 1),
+                        #                                             drawingModule.DrawingSpec(color = (250, 44, 250), thickness = 2, circle_radius = 1))
                         #         img = cv2.bilateralFilter(img, 5, 50, 100)
                         #         img = img[TOP:BOTTOM, LEFT:RIGHT]
                         #         imgss.append(img)
-                        #         time.sleep(0.1)
-                        #         if len(imgs)==5:
-                        #             actt= prediction(imgss)
+                        #         time.sleep(0.25)
+                        #         if len(imgss)==5:
+                        #             actt= adaboost_SVC.prediction(imgss)
                         #             # actt= 1
                         #             imgss.clear()
-                        #         if  not actt:
-                        #             break
-                                
-                        #         # if results.multi_hand_landmarks: 
-                        #         #     for hand_landmarks in results.multi_hand_landmarks:
-                        #         #         mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-                    elif act==8:
-                        continue
+                        #             if  actt==4:
+                        #                 break
+    cap.release()
+    cv2.destroyAllWindows()
                 
