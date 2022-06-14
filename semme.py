@@ -111,7 +111,7 @@ if __name__ == "__main__":
     data = []
     label = []
     weak_learners = []
-    dataPath = "data/training/skeleton"
+    dataPath = "data/training/no_skeleton"
 
 
     #load data
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         data.append(img)
         label.append(i)
     
-    X_train, X_test,y_train,y_test = train_test_split(data,label, test_size=0.3,shuffle=True)
+    X_train, X_test,y_train,y_test = train_test_split(data,label, test_size=0.2,shuffle=True)
     
     train_data = np.asarray(X_train)
     nsamples,nx,ny = train_data.shape
