@@ -107,7 +107,7 @@ class SAMME:
     
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="data collection")
+        description="train and test adaboost")
     parser.add_argument(
         '-n',
         type = int,
