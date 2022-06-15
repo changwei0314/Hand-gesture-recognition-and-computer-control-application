@@ -130,7 +130,7 @@ def parse_args():
 
 if __name__ == "__main__":
     ARGS = parse_args()
-    num_learner = ARGS.n
+    num_learner = ARGS.num_learner
     num_cats = ARGS.clsNum
     if(ARGS.addSkeleton):
         dataPath = "data/training/skeleton"
@@ -181,6 +181,11 @@ if __name__ == "__main__":
     print("Confusion_matrix:")
     print(metrics.confusion_matrix(y_test,y_pred))
     print(metrics.classification_report(y_test,y_pred))
+
+    
+
+
+
 
     
 
