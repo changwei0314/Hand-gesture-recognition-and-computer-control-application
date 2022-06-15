@@ -12,11 +12,7 @@ import argparse
 from collectData import parse_args
 
 class SAMME:
-    """
-    SAMME - multi-class AdaBoost algorithm
-    @ref:   Zhu, Ji & Rosset, Saharon & Zou, Hui & Hastie, Trevor. (2006). Multi-class AdaBoost. Statistics and its
-            interface. 2. 10.4310/SII.2009.v2.n3.a8.
-    """
+
 
     def __init__(self, num_learner: int, num_cats: int):
         """
@@ -107,9 +103,10 @@ class SAMME:
     
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="train and test adaboost")
+        description="train and test Adaboost")
     parser.add_argument(
         '-n',
+        '--num_learner',
         type = int,
         default=30,
         help='Number of weakclassifier'
@@ -184,6 +181,10 @@ if __name__ == "__main__":
     print("Confusion_matrix:")
     print(metrics.confusion_matrix(y_test,y_pred))
     print(metrics.classification_report(y_test,y_pred))
+
+    
+
+
 
     
 
