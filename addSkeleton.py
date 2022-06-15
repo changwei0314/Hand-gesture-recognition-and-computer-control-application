@@ -1,6 +1,8 @@
 import cv2
 import os
 import mediapipe
+from collectData import parse_args
+import argparse
 
 drawingModule = mediapipe.solutions.drawing_utils
 handsModule = mediapipe.solutions.hands
@@ -26,12 +28,29 @@ def addSkeleton(path):
 
     return image
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="add skeleton")
+    parser.add_argument(
+        '-p',
+        type = str,
+        default=0,
+        help='path of file or image'
+    )
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    Path = "data/training/no_skeleton"
-    skeletonImgPath = "data/training/skeleton"
-    for i in range (10):
-        flist = os.listdir(Path+"/"+str(i))
-        for imgPath in flist:
-            skeletonImg = addSkeleton(Path+"/"+str(i)+"/"+imgPath)
-            filename = imgPath.split("/")[-1]
-            cv2.imwrite(skeletonImgPath+"/"+str(i)+"/"+filename,skeletonImg)
+    ARGS = parse_args()
+    try:
+        os.path.isdir(ARGS.p)
+        flist = os.listdir(ARGS.p)
+        for img in flist:
+            img = addSkeleton(os.path.join(ARGS.p,img))
+            cv2.imwrite(os.path.join(ARGS.p,img),img)
+    except:
+        try:
+            img = addSkeleton(ARGS.p)
+            cv2.imwrite(ARGS.p,img)
+
+        except:
+            print("not an image!!!")
