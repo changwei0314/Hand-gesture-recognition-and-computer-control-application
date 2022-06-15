@@ -8,6 +8,8 @@ from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
+import argparse
+from collectData import parse_args
 
 class SAMME:
     """
@@ -102,16 +104,45 @@ class SAMME:
             pooled_prediction += prediction*self.learner_weights[learner_idx]
 
         return np.argmax(pooled_prediction)
+    
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="data collection")
+    parser.add_argument(
+        '-n',
+        type = int,
+        default=30,
+        help='Number of weakclassifier'
+    )
+    parser.add_argument(
+        '-c',
+        '--clsNum',
+        type = int,
+        default=10,
+        help='Number of class.'
+    )
+    parser.add_argument(
+        '-a',
+        '--addSkeleton',
+        default=1,
+        help='Add skeleton or not.'
+    )
+    return parser.parse_args()
 
 
 
 if __name__ == "__main__":
-    num_learner = 30
-    num_cats = 10
+    ARGS = parse_args()
+    num_learner = ARGS.n
+    num_cats = ARGS.clsNum
+    if(ARGS.addSkeleton):
+        dataPath = "data/training/skeleton"
+    else:
+        dataPath = "data/training/no_skeleton"
     data = []
     label = []
     weak_learners = []
-    dataPath = "data/training/no_skeleton"
+    
 
 
     #load data
