@@ -1,15 +1,15 @@
 # AI-Final-Project
 ### Gesture-Classification-in-Real-Time
-
+>
 ## Introduction
 In this work, we train a CNN by using self collected data with skeleton on it. Then we gave the result that (1) our model outperformed the adaboost baseline and (2) adding a skeleton on the dataset improves the model performance
-
+>
 ## Collect Data
 1. Collecting data
 2. Adding skeleton on image
 `python addSkeleton.py [-h] [-p PATH]`
 The path can be the directory of an image or a file
-
+>
 ## Training
 1. Train Adaboost
 >`python samme.py [-h] [-n NUM_LEARNER] [-c CLSNUM] [-a ADDSKELETON]`
