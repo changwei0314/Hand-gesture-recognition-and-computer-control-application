@@ -1,5 +1,5 @@
 # AI-Final-Project
-###### Gesture-Classification-in-Real-Time
+#### Gesture-Classification-in-Real-Time
 
 ## Introduction
 >In this work, we train a CNN by using self collected data with skeleton on it. Then we gave the result that (1) our model outperformed the adaboost baseline and (2) adding a skeleton on the dataset improves the model performance
