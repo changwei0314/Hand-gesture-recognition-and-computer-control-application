@@ -9,7 +9,7 @@
 >1. Collecting data
 >2. Adding skeleton on image
 >`python addSkeleton.py [-h] [-p PATH]`
->The path can be the directory of an image or a f
+>The path can be the directory of an image or a folder
 
 
 ## Training
